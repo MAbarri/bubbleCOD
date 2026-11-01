@@ -16,6 +16,8 @@
     .order-success[hidden]{display:none!important}.order-success:not([hidden]){display:block;text-align:center;padding:26px 18px 12px;animation:success-appear .45s ease-out both}.order-success h3{font:400 24px/1.2 var(--serif);margin:17px 0 9px;color:var(--ink)}.order-success p{max-width:350px;margin:0 auto 10px;color:#716b63;font-size:12px;line-height:1.75}.order-success .delivery-promise{margin-top:13px;color:var(--ink);font-size:13px}.success-mark{width:76px;height:76px;margin:auto;border-radius:50%;background:#eef3ef;display:grid;place-items:center}.success-mark svg{width:64px;height:64px;overflow:visible}.success-mark circle,.success-mark path{fill:none;stroke:var(--green);stroke-linecap:round;stroke-linejoin:round}.success-mark circle{stroke-width:2.5;stroke-dasharray:170;stroke-dashoffset:170;animation:success-circle .72s ease-out .08s forwards}.success-mark path{stroke-width:3;stroke-dasharray:38;stroke-dashoffset:38;animation:success-check .42s ease-out .68s forwards}@keyframes success-appear{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}@keyframes success-circle{to{stroke-dashoffset:0}}@keyframes success-check{to{stroke-dashoffset:0}}.cta:disabled{opacity:.65;cursor:wait}@media(prefers-reduced-motion:reduce){.order-success:not([hidden]){animation:none}.success-mark circle,.success-mark path{animation:none;stroke-dashoffset:0}}
   
     #sizeOptions .size{transition:border-color .18s,box-shadow .18s,color .18s}#sizeOptions.selection-error .size{border-color:#bd3c36;color:#9f2823}#sizeOptions.selection-error .size:focus{outline:2px solid #bd3c36;outline-offset:2px}.selection-hint,.order-feedback{margin:7px 0 0;color:#ad302a;font-size:11px;line-height:1.5}.order-feedback{text-align:center}
+  
+    .field input.input-invalid{border-color:#bd3c36!important;background:#fff9f8;box-shadow:0 0 0 2px #bd3c3620}.invalid-shake{animation:validation-shake .36s ease-in-out}#sizeOptions.selection-error.invalid-shake{animation:validation-shake .36s ease-in-out}@keyframes validation-shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}@media(prefers-reduced-motion:reduce){.invalid-shake{animation:none!important}}
   </style>
 </head>
 <body>
@@ -50,7 +52,7 @@
         <div class="qty-row"><div class="qty" aria-label="Quantité"><button type="button" id="qtyMinus" aria-label="Diminuer la quantité">−</button><output id="quantity">1</output><button type="button" id="qtyPlus" aria-label="Augmenter la quantité">+</button></div><div class="stock-note"><span class="stock-dot"></span>Disponibilité à confirmer</div></div>
         <div class="order-box" id="order">
           <h2>Informations de commande</h2>
-          <form id="orderForm">
+          <form id="orderForm" novalidate>
             <div class="form-grid">
               <div class="field full"><label for="customerName">Nom complet</label><input id="customerName" name="customerName" autocomplete="name" placeholder="Votre nom et prénom" required></div>
               <div class="field"><label for="customerPhone">Téléphone</label><input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="06 00 00 00 00" required></div>
@@ -125,7 +127,21 @@
     $('mainProductImage').src = PRODUCT.images[0].src; $('mainProductImage').alt = PRODUCT.images[0].alt;
     $('photoCount').textContent = "01 / " + String(PRODUCT.images.length).padStart(2,"0");
     PRODUCT.colors.forEach((color) => { const b=document.createElement('button'); b.type='button'; b.className='swatch'+(color===selectedColor?' selected':''); b.textContent=color; b.addEventListener('click',()=>{selectedColor=color;$('colorLabel').textContent=color;document.querySelectorAll('.swatch').forEach(x=>x.classList.toggle('selected',x===b));}); $('colorOptions').appendChild(b); });
-    PRODUCT.sizes.forEach((size) => { const b=document.createElement('button'); b.type='button'; b.className='size'; b.textContent=size; b.setAttribute('aria-label','Taille '+size); b.setAttribute('aria-pressed','false'); b.addEventListener('click',()=>{selectedSize=size;document.querySelectorAll('.size').forEach(x=>{x.classList.toggle('selected',x===b);x.setAttribute('aria-pressed',String(x===b));});$('sizeOptions').classList.remove('selection-error');$('sizeError').hidden=true;}); $('sizeOptions').appendChild(b); });
+    PRODUCT.sizes.forEach((size) => { const b=document.createElement('button'); b.type='button'; b.className='size'; b.textContent=size; b.setAttribute('aria-label','Taille '+size); b.setAttribute('aria-pressed','false'); b.addEventListener('click',()=>{selectedSize=size;document.querySelectorAll('.size').forEach(x=>{x.classList.toggle('selected',x===b);x.setAttribute('aria-pressed',String(x===b));});$('sizeOptions').classList.remove('selection-error','invalid-shake');$('sizeError').hidden=true;if(Array.from(document.querySelectorAll('#orderForm input[required]')).every(x=>x.value.trim())){$('orderFeedback').hidden=true;$('orderFeedback').textContent='';}}); $('sizeOptions').appendChild(b); });
+    const animateInvalid = (element) => { element.classList.remove('invalid-shake'); void element.offsetWidth; element.classList.add('invalid-shake'); };
+    document.querySelectorAll('#orderForm input[required]').forEach((input) => {
+      input.addEventListener('input', () => {
+        if (input.value.trim()) {
+          input.classList.remove('input-invalid','invalid-shake');
+          input.removeAttribute('aria-invalid');
+        }
+        const fieldsComplete = Array.from(document.querySelectorAll('#orderForm input[required]')).every((field) => field.value.trim());
+        if (fieldsComplete && selectedSize) {
+          $('orderFeedback').hidden = true;
+          $('orderFeedback').textContent = '';
+        }
+      });
+    });
     let slideAnimating=false;
     const showImage = (index,direction=null) => {
       const next=(index+PRODUCT.images.length)%PRODUCT.images.length;
@@ -200,13 +216,37 @@
 
     $('orderForm').addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (!selectedColor || !selectedSize) {
-        if (!selectedSize) {
-          $('sizeOptions').classList.add('selection-error');
-          $('sizeError').hidden = false;
-          $('sizeOptions').scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const firstSize = $('sizeOptions').querySelector('.size');
-          if (firstSize) firstSize.focus({ preventScroll: true });
+      const form = event.currentTarget;
+      const requiredInputs = Array.from(form.querySelectorAll('input[required]'));
+      const invalidInputs = requiredInputs.filter((input) => !input.value.trim());
+      requiredInputs.forEach((input) => {
+        const invalid = !input.value.trim();
+        input.classList.toggle('input-invalid', invalid);
+        if (invalid) {
+          input.setAttribute('aria-invalid', 'true');
+          animateInvalid(input);
+        } else {
+          input.removeAttribute('aria-invalid');
+        }
+      });
+
+      const missingSize = !selectedSize;
+      if (missingSize) {
+        $('sizeOptions').classList.add('selection-error');
+        $('sizeError').hidden = false;
+        animateInvalid($('sizeOptions'));
+      }
+      if (invalidInputs.length || missingSize || !selectedColor) {
+        $('orderFeedback').textContent = invalidInputs.length && missingSize
+          ? 'Complète les champs en rouge et choisis une taille.'
+          : invalidInputs.length
+            ? 'Complète les champs en rouge.'
+            : 'Veuillez choisir une taille.';
+        $('orderFeedback').hidden = false;
+        const firstInvalid = invalidInputs[0] || (missingSize ? $('sizeOptions').querySelector('.size') : null);
+        if (firstInvalid) {
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstInvalid.focus({ preventScroll: true });
         }
         return;
       }
@@ -216,7 +256,6 @@
         return;
       }
 
-      const form = event.currentTarget;
       const submitButton = form.querySelector('button[type="submit"]');
       const originalButtonText = submitButton.textContent;
       const data = new FormData(form);
