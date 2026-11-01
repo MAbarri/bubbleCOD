@@ -1,7 +1,9 @@
-# Atelier Élégance — Manteau Élise
+# Manteau Alma — page produit
 
-Static product page source, ready for Cloudflare Pages.
+Page produit statique de Manteau Alma. Le site compilé et ses images sont dans `dist/`.
 
-Cloudflare Pages settings: build command `none`; build output directory `dist`.
+## Déploiement avec Cloudflare Pages
 
-The order form is a visual prototype and is not connected to an order spreadsheet yet.
+Connectez ce dépôt à Cloudflare Pages et choisissez la branche `Manteau-Alma`. Réglages : preset **None**, commande de build vide, répertoire de sortie `dist`.
+
+Le formulaire est une maquette : il valide les champs dans le navigateur, mais n’envoie ni ne conserve les commandes.
