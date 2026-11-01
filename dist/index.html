@@ -53,7 +53,7 @@
               <div class="field full"><label for="customerAddress">Adresse de livraison</label><input id="customerAddress" name="customerAddress" autocomplete="street-address" placeholder="Quartier, rue et numéro" required></div>
             </div>
             <button class="cta" type="submit">Commander</button>
-            <p class="notice"><b>Maquette privée :</b> les commandes ne sont pas enregistrées. Le formulaire sera relié à ton tableau avant sa mise en vente.</p>
+            <p class="notice">Vos informations sont utilisées uniquement pour traiter et confirmer votre commande.</p>
           </form>
           <div class="delivery"><span class="delivery-icon">⌖</span><span>Livraison au Maroc<br><small>Modalités et frais à confirmer selon la ville</small></span></div>
         </div>
@@ -82,7 +82,7 @@
     <div><h3>Informations</h3><div class="footer-links"><a href="#conditions">Conditions de vente</a><a href="#confidentialite">Confidentialité</a><a href="#faq">FAQ</a></div></div>
   </div><div class="copyright">© 2026 Votre boutique · Tous droits réservés</div></footer>
   <div class="mobile-buy"><div><strong id="mobilePrice">599 DH</strong><small id="mobileProduct">Manteau Alma — Brun Chocolat</small></div><a href="#order">Commander</a></div>
-  <div class="modal" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><div class="check">✓</div><h2 id="modalTitle">Formulaire prêt</h2><p>La maquette est en mode aperçu : aucune donnée n’a été envoyée ni enregistrée. Le formulaire sera activé quand le tableau de commandes sera connecté.</p><button type="button" id="closeModal">Compris</button></div></div>
+  <div class="modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-card"><div class="check">✓</div><h2 id="modalTitle">Commande reçue !</h2><p>Votre commande a bien été enregistrée. Nous vous contacterons pour confirmer la disponibilité et la livraison.</p><button type="button" id="closeModal">Compris</button></div></div>
   <script>
     // Informations du Manteau Alma — Brun Chocolat.
     const PRODUCT = {title:"Manteau Alma — Brun Chocolat", price:"599 DH", oldPrice:"", discount:"", colors:["Brun chocolat"], sizes:["S","M","L"], images:[
@@ -166,8 +166,46 @@
       if(e.key==='ArrowLeft'){e.preventDefault();showImage(currentImage-1,-1);}
     });
     $('qtyMinus').addEventListener('click',()=>{qty=Math.max(1,qty-1);$('quantity').textContent=qty;}); $('qtyPlus').addEventListener('click',()=>{qty=Math.min(10,qty+1);$('quantity').textContent=qty;}); $('cartCount').textContent='0';
-    $('orderForm').addEventListener('submit',(event)=>{event.preventDefault(); if(!selectedColor || !selectedSize){alert('Choisis une couleur et une taille pour continuer.');return;} $('demoModal').classList.add('open');});
-    $('closeModal').addEventListener('click',()=>$('demoModal').classList.remove('open')); $('demoModal').addEventListener('click',(e)=>{if(e.target===$('demoModal'))$('demoModal').classList.remove('open');});
+    $('orderForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!selectedColor || !selectedSize) {
+        alert('Choisis une couleur et une taille pour continuer.');
+        return;
+      }
+      const form = event.currentTarget;
+      const submitButton = form.querySelector('button[type="submit"]');
+      const originalButtonText = submitButton.textContent;
+      const data = new FormData(form);
+      submitButton.disabled = true;
+      submitButton.textContent = 'Envoi en cours…';
+      try {
+        const response = await fetch('/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customerName: data.get('customerName').trim(),
+            customerPhone: data.get('customerPhone').trim(),
+            customerCity: data.get('customerCity').trim(),
+            customerAddress: data.get('customerAddress').trim(),
+            color: selectedColor,
+            size: selectedSize,
+            quantity: qty
+          })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || 'Impossible d’enregistrer la commande.');
+        $('successModal').classList.add('open');
+        form.reset();
+        qty = 1;
+        $('quantity').textContent = '1';
+      } catch (error) {
+        alert(error.message || 'Une erreur est survenue. Réessaie dans quelques instants.');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
+    });
+    $('closeModal').addEventListener('click',()=>$('successModal').classList.remove('open')); $('successModal').addEventListener('click',(e)=>{if(e.target===$('successModal'))$('successModal').classList.remove('open');});
   </script>
 </body>
 </html>
