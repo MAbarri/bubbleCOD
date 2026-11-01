@@ -166,46 +166,75 @@
       if(e.key==='ArrowLeft'){e.preventDefault();showImage(currentImage-1,-1);}
     });
     $('qtyMinus').addEventListener('click',()=>{qty=Math.max(1,qty-1);$('quantity').textContent=qty;}); $('qtyPlus').addEventListener('click',()=>{qty=Math.min(10,qty+1);$('quantity').textContent=qty;}); $('cartCount').textContent='0';
+    // Connecte la page à un Google Form lié à une feuille Google Sheets.
+    const GOOGLE_FORM_RESPONSE_URL = "";
+    const GOOGLE_FORM_ENTRY_IDS = {
+      customerName: "",
+      customerPhone: "",
+      customerCity: "",
+      customerAddress: "",
+      product: "",
+      color: "",
+      size: "",
+      quantity: "",
+      unitPrice: "",
+      total: ""
+    };
+
     $('orderForm').addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!selectedColor || !selectedSize) {
         alert('Choisis une couleur et une taille pour continuer.');
         return;
       }
+      if (!GOOGLE_FORM_RESPONSE_URL || Object.values(GOOGLE_FORM_ENTRY_IDS).some((id) => !id)) {
+        alert('Le formulaire de commande doit encore être relié à la feuille Google Sheets.');
+        return;
+      }
+
       const form = event.currentTarget;
       const submitButton = form.querySelector('button[type="submit"]');
       const originalButtonText = submitButton.textContent;
       const data = new FormData(form);
+      const unitPrice = 599;
+      const orderValues = {
+        customerName: data.get('customerName').trim(),
+        customerPhone: data.get('customerPhone').trim(),
+        customerCity: data.get('customerCity').trim(),
+        customerAddress: data.get('customerAddress').trim(),
+        product: PRODUCT.title,
+        color: selectedColor,
+        size: selectedSize,
+        quantity: qty,
+        unitPrice: unitPrice + ' DH',
+        total: (unitPrice * qty) + ' DH'
+      };
+      const params = new URLSearchParams();
+      Object.entries(orderValues).forEach(([key, value]) => {
+        params.set('entry.' + GOOGLE_FORM_ENTRY_IDS[key], String(value));
+      });
+
       submitButton.disabled = true;
       submitButton.textContent = 'Envoi en cours…';
       try {
-        const response = await fetch('/api/order', {
+        // Google Forms accepts URL-encoded submissions from static pages; no server or app deployment is needed.
+        await fetch(GOOGLE_FORM_RESPONSE_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            customerName: data.get('customerName').trim(),
-            customerPhone: data.get('customerPhone').trim(),
-            customerCity: data.get('customerCity').trim(),
-            customerAddress: data.get('customerAddress').trim(),
-            color: selectedColor,
-            size: selectedSize,
-            quantity: qty
-          })
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
         });
-        const result = await response.json();
-        if (!response.ok || !result.ok) throw new Error(result.error || 'Impossible d’enregistrer la commande.');
         $('successModal').classList.add('open');
         form.reset();
         qty = 1;
         $('quantity').textContent = '1';
       } catch (error) {
-        alert(error.message || 'Une erreur est survenue. Réessaie dans quelques instants.');
+        alert('La commande n’a pas pu être envoyée. Vérifie ta connexion puis réessaie.');
       } finally {
         submitButton.disabled = false;
         submitButton.textContent = originalButtonText;
       }
     });
-    $('closeModal').addEventListener('click',()=>$('successModal').classList.remove('open')); $('successModal').addEventListener('click',(e)=>{if(e.target===$('successModal'))$('successModal').classList.remove('open');});
-  </script>
+    $('closeModal').addEventListener('click',()=>$('successModal').classList.remove('open')); $('successModal').addEventListener('click',(e)=>{if(e.target===$('successModal'))$('successModal').classList.remove('open');});</script>
 </body>
 </html>
