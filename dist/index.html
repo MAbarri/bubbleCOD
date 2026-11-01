@@ -167,18 +167,18 @@
     });
     $('qtyMinus').addEventListener('click',()=>{qty=Math.max(1,qty-1);$('quantity').textContent=qty;}); $('qtyPlus').addEventListener('click',()=>{qty=Math.min(10,qty+1);$('quantity').textContent=qty;}); $('cartCount').textContent='0';
     // Connecte la page à un Google Form lié à une feuille Google Sheets.
-    const GOOGLE_FORM_RESPONSE_URL = "";
+    const GOOGLE_FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdG-5rsRoEn9ar-IbmlxnIcRth6TFT5190DzA3evgJmU6oMpA/formResponse";
     const GOOGLE_FORM_ENTRY_IDS = {
-      customerName: "",
-      customerPhone: "",
-      customerCity: "",
-      customerAddress: "",
-      product: "",
-      color: "",
-      size: "",
-      quantity: "",
-      unitPrice: "",
-      total: ""
+      customerName: "810445449",
+      customerPhone: "426932091",
+      customerCity: "2140908031",
+      customerAddress: "1463740180",
+      product: "606740722",
+      color: "67399127",
+      size: "1848060983",
+      quantity: "58888891",
+      unitPrice: "1082826348",
+      total: "807100360"
     };
 
     $('orderForm').addEventListener('submit', async (event) => {
