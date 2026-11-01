@@ -19,8 +19,27 @@
   
     .field input.input-invalid{border-color:#bd3c36!important;background:#fff9f8;box-shadow:0 0 0 2px #bd3c3620}.invalid-shake{animation:validation-shake .36s ease-in-out}#sizeOptions.selection-error.invalid-shake{animation:validation-shake .36s ease-in-out}@keyframes validation-shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}@media(prefers-reduced-motion:reduce){.invalid-shake{animation:none!important}}
   </style>
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1119274857605302');
+  fbq('track', 'PageView');
+  </script>
+  <!-- End Meta Pixel Code -->
 </head>
 <body>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1119274857605302&ev=PageView&noscript=1"
+  alt=""
+/></noscript>
+
   <div class="promo">Nouvelle collection <span aria-hidden="true">•</span> Découvrez votre prochain coup de cœur</div>
   <header class="header"><div class="header-inner">
     <nav class="nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#description">Collections</a><a href="#contact">Contact</a></nav>
@@ -122,6 +141,15 @@
     $('productTitle').textContent = PRODUCT.title; $('mobileProduct').textContent = PRODUCT.title;
     $('price').textContent = PRODUCT.price; $('oldPrice').textContent = PRODUCT.oldPrice; $('discount').textContent = PRODUCT.discount; $('oldPrice').hidden = !PRODUCT.oldPrice; $('discount').hidden = !PRODUCT.discount;
     $('mobilePrice').textContent = PRODUCT.price;
+    if (typeof fbq === 'function') {
+      fbq('track', 'ViewContent', {
+        content_name: PRODUCT.title,
+        content_type: 'product',
+        content_ids: ['manteau-alma-brun-chocolat'],
+        value: 599,
+        currency: 'MAD'
+      });
+    }
     let selectedColor = PRODUCT.colors.length === 1 ? PRODUCT.colors[0] : "", selectedSize = "", qty = 1, currentImage = 0;
     $('colorLabel').textContent = selectedColor || "À choisir";
     $('mainProductImage').src = PRODUCT.images[0].src; $('mainProductImage').alt = PRODUCT.images[0].alt;
@@ -289,6 +317,15 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: params.toString()
         });
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', {
+            content_name: PRODUCT.title,
+            content_type: 'product',
+            content_ids: ['manteau-alma-brun-chocolat'],
+            value: unitPrice * qty,
+            currency: 'MAD'
+          });
+        }
         form.reset();
         qty = 1;
         $('quantity').textContent = '1';
