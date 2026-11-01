@@ -1,7 +1,14 @@
-# Atelier Élégance — Manteau Élise
+# Fiche produit — boutique (maquette)
 
-Static product page source, ready for Cloudflare Pages.
+Page statique, mobile-first, créée comme maquette privée. Les blocs suivent le parcours général de la page de référence tout en utilisant un nom, des textes et des visuels de substitution.
 
-Cloudflare Pages settings: build command `none`; build output directory `dist`.
+## À remplacer avant mise en vente
 
-The order form is a visual prototype and is not connected to an order spreadsheet yet.
+- Le nom et l'identité de la boutique.
+- Le titre, le tarif, l'ancien prix éventuel et la promotion.
+- Les photos du produit dans la galerie.
+- Les variantes de couleur et de taille.
+- La description, les informations de livraison/échange et les coordonnées de contact.
+- Le raccordement du formulaire à une destination de commandes (par exemple un Google Sheet choisi par la propriétaire).
+
+Le formulaire de la maquette valide la sélection et les champs, mais ne transmet ni ne conserve aucune donnée.
