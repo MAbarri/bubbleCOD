@@ -130,6 +130,7 @@ src="https://www.facebook.com/tr?id=1079831771556799&ev=PageView&noscript=1"
     $('productTitle').textContent = PRODUCT.title; $('mobileProduct').textContent = PRODUCT.title;
     $('price').textContent = PRODUCT.price; $('oldPrice').textContent = PRODUCT.oldPrice; $('discount').textContent = PRODUCT.discount; $('oldPrice').hidden = !PRODUCT.oldPrice; $('discount').hidden = !PRODUCT.discount;
     $('mobilePrice').textContent = PRODUCT.price;
+    if (typeof fbq === 'function') fbq('track', 'ViewContent', { content_name: PRODUCT.title, content_ids: ['manteau-elise'], content_type: 'product', value: 349, currency: 'MAD' });
     let selectedColor = PRODUCT.colors.length === 1 ? PRODUCT.colors[0] : "", selectedSize = "", qty = 1, currentImage = 0;
     const updateSelectionMessage = () => {
       const message = $('selectionMessage');
@@ -194,6 +195,7 @@ src="https://www.facebook.com/tr?id=1079831771556799&ev=PageView&noscript=1"
       submitButton.disabled = true; submitButton.textContent = 'Envoi en cours…';
       try {
         await fetch(GOOGLE_FORM_RESPONSE_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() });
+        if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: PRODUCT.title });
         form.reset(); qty = 1; $('quantity').textContent = '1';
         form.hidden = true; document.querySelector('.delivery').hidden = true;
         $('orderSuccess').hidden = false;
