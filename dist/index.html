@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 8657)
-Total output lines: 303
-
 <!doctype html>
 <html lang="fr">
 <head>
@@ -28,7 +25,37 @@ Total output lines: 303
   <header class="header"><div class="header-inner">
     <nav class="nav" aria-label="Navigation principale"><a href="#accueil">Accueil</a><a href="#description">Collections</a><a href="#contact">Contact</a></nav>
     <a class="brand" href="#accueil">ATELIER ÉLÉGANCE</a>
-    <div class="header-right"><span>Maroc</span><span class="cart">Panier&nbsp; <b id="cartCount">0</b></span></…657 tokens truncated…léphone</label><input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="06 00 00 00 00" required></div>
+    <div class="header-right"><span>Maroc</span><span class="cart">Panier&nbsp; <b id="cartCount">0</b></span></div>
+  </div></header>
+  <main id="accueil" class="container">
+    <div class="crumbs">Accueil <span>/</span> Nouveautés <span>/</span> Produit</div>
+    <section class="product" aria-label="Fiche produit">
+      <div class="gallery">
+        <div class="thumbs" id="thumbs" aria-label="Vues du produit"></div>
+        <div class="main-photo" role="group" tabindex="0" aria-label="Galerie photo du produit. Utilisez les flèches gauche et droite ou faites glisser pour changer de photo.">
+          <img class="product-photo" id="mainProductImage" src="/images/manteau-selene-produit-reel.webp" alt="Manteau Sélène gris anthracite, photo réelle du produit sur mannequin" fetchpriority="high">
+          <span class="photo-count" id="photoCount">01 / 06</span>
+        </div>
+      </div>
+      <div class="details">
+        <p class="eyebrow">NOUVELLE COLLECTION</p>
+        <h1 class="title" id="productTitle">Manteau Sélène — Gris Anthracite</h1>
+        <div class="rating"><span>Nouveauté · Tailles M et L</span></div>
+        <div class="price-row"><span class="price" id="price">499 MAD</span><span class="old-price" id="oldPrice">Prix initial</span><span class="save" id="discount">Promo</span></div>
+        <div class="price-note">Prix affiché en dirhams marocains. Livraison gratuite partout au Maroc.</div>
+        <div class="rule"></div>
+        <div class="option-head"><label for="colorOptions">Couleur</label><span id="colorLabel">Gris anthracite</span></div>
+        <div class="swatches" id="colorOptions"></div>
+        <div class="option-head"><label for="sizeOptions">Taille</label><a class="size-guide" href="#guide">Guide des tailles</a></div>
+        <div class="sizes" id="sizeOptions"></div>
+        <p class="selection-hint" id="sizeError" role="status" hidden>Veuillez choisir une taille.</p>
+        <div class="qty-row"><div class="qty" aria-label="Quantité"><button type="button" id="qtyMinus" aria-label="Diminuer la quantité">−</button><output id="quantity">1</output><button type="button" id="qtyPlus" aria-label="Augmenter la quantité">+</button></div><div class="stock-note"><span class="stock-dot"></span>Disponibilité à confirmer</div></div>
+        <div class="order-box" id="order">
+          <h2>Informations de commande</h2>
+          <form id="orderForm" novalidate>
+            <div class="form-grid">
+              <div class="field full"><label for="customerName">Nom complet</label><input id="customerName" name="customerName" autocomplete="name" placeholder="Votre nom et prénom" required></div>
+              <div class="field"><label for="customerPhone">Téléphone</label><input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" inputmode="tel" placeholder="06 00 00 00 00" required></div>
               <div class="field"><label for="customerCity">Ville</label><input id="customerCity" name="customerCity" autocomplete="address-level2" placeholder="Votre ville" required></div>
               <div class="field full"><label for="customerAddress">Adresse de livraison</label><input id="customerAddress" name="customerAddress" autocomplete="street-address" placeholder="Quartier, rue et numéro" required></div>
             </div>
